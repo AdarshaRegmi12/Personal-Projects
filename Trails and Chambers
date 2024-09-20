@@ -1,0 +1,79 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Character character = new Character();
+        Scanner scanner = new Scanner(System.in);
+        // User selects difficulty of level
+        System.out.println("Enter the difficulty of the game you want to play. Pick between these : EASY, MEDIUM, or HARD");
+        String difficulty = scanner.next();
+        scanner.nextLine();
+        char[] level = character.generateLevel(difficulty.toUpperCase());
+
+        // Iterate through each champer in the generated level
+        for (char chamber : level) {
+            if (chamber == 'X') {
+                System.out.println("You encountered a trap!");
+                System.out.println("Choose to avoid (A) or disarm (D) the trap:");
+
+                String choice = scanner.next();
+                scanner.nextLine();
+                
+                System.out.println("Choice: " + choice);
+                if (choice.equalsIgnoreCase("A")) {
+                    boolean trapAvoided = character.avoid();
+                    // Check if trap was avoided or not.
+                    if (!trapAvoided) {
+                        System.out.println("Trap not avoided!");
+                        System.out.println("Current health: " + character.health);
+                    } else {
+                        System.out.println("Trap avoided");
+                    }
+                    // Check if trap was disarmed or not.
+                } else if (choice.equalsIgnoreCase("D")) {
+                    boolean trapDisarmed = character.disarm();
+                    if (!trapDisarmed) {
+                        System.out.println("Trap not disarmed!");
+                        System.out.println("Current health: " + character.health);
+                    } else {
+                        System.out.print("Trap Disarmed! You are in a safe space. Press ENTER to continue. ");
+                        scanner.nextLine();
+                        continue;
+                    }
+                }
+                // End the game if character's health is all gone
+                if (character.health <= 0) {
+                    System.out.println("Game over! You lost all your health.");
+                    break;
+                }
+                // Safe Chamber
+            } else if (chamber == 'S') {
+                System.out.println("Moving to the next chamber...");
+                System.out.print("You are in a safe space. Press ENTER to continue. ");
+                scanner.nextLine();
+                continue;
+                // Treasure room chamber
+            } else if (chamber == 'T') {
+                System.out.println("Entering the treasure room...");
+                boolean trapDisarmed = character.disarm();
+                boolean trapAvoided = character.avoid();
+                // Check if trap is disarmed or not, if not, character will try to avoid it.
+                // If both unsucessfull, game is over, if successfull game is won
+                if(!trapDisarmed){
+                    System.out.println("You failed to disarm the trap, trying to avoid the trap...");
+                    if(!trapAvoided){
+                        System.out.println("You failed to avoid the trap, you lost!");
+                    }
+                    else if(trapAvoided){
+                        System.out.println("Congarts you avoided the trap and won the game!");
+                    }
+                }else{
+                    System.out.println("Congratulations! You disarmed the trap and won the game!");
+                }
+                break;
+            }
+        }
+
+        scanner.close();
+    }   
+}
